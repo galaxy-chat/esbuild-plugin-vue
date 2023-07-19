@@ -10,7 +10,8 @@ export async function resolveStyle(
     index: number,
     isModule: boolean,
     moduleWithNameImport: boolean,
-    isProd: boolean
+    isProd: boolean,
+    injectCss: boolean
 ) {
     const descriptor = getDesCache(filename)
     const styleBlock = descriptor.styles[index]
@@ -40,7 +41,7 @@ export async function resolveStyle(
         styleCode = res.code
     }
 
-    if (res.map && !moduleWithNameImport) {
+    if (res.map && !moduleWithNameImport && !injectCss) {
         styleCode += convert.fromObject(res.map).toComment({ multiline: true })
     }
     const errors: PartialMessage[] = res.errors.map(e => ({

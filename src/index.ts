@@ -23,11 +23,13 @@ export interface Options {
         SFCAsyncStyleCompileOptions,
         'modulesOptions' | 'preprocessLang' | 'preprocessOptions' | 'postcssOptions' | 'postcssPlugins'
     >
+
+    injectCss: true
 }
 
 validateDenpendency()
 
-function plugin({ templateOptions, scriptOptions, styleOptions }: Options = {}): Plugin {
+function plugin({ templateOptions, scriptOptions, styleOptions, injectCss }: Options = {}): Plugin {
     return {
         name: 'vue',
         setup(build) {
@@ -139,13 +141,14 @@ function plugin({ templateOptions, scriptOptions, styleOptions }: Options = {}):
                         Number(index),
                         !!isModule,
                         moduleWithNameImport,
-                        isProd
+                        isProd,
+                        injectCss
                     )
                     return {
-                        contents: styleCode,
+                        contents: injectCss ? (`const style = document.createElement('style');` + `style.textContent = ${JSON.stringify(styleCode)};` + `document.body.append(style);`) : styleCode,
                         errors,
                         resolveDir: dirname,
-                        loader: moduleWithNameImport ? 'json' : 'css'
+                        loader: injectCss ? 'js' : (moduleWithNameImport ? 'json' : 'css')
                     }
                 }
             )
