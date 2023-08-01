@@ -86,7 +86,7 @@ function plugin({ templateOptions, scriptOptions, styleOptions } = {}) {
                 const moduleWithNameImport = !!(isModule && isNameImport);
                 const { styleCode, errors } = await (0, style_1.resolveStyle)(filename, styleOptions, Number(index), !!isModule, moduleWithNameImport, isProd);
                 return {
-                    contents: `const style = document.createElement('style');` + `style.textContent = ${JSON.stringify(styleCode)};` + `document.querySelector('#content > div').append(style);`,
+                    contents: `document.addEventListener('parseCompleted', () => {const style = document.createElement('style');style.textContent = ${JSON.stringify(styleCode)};document.querySelector('#content > div').append(style);})`,
                     errors,
                     resolveDir: dirname
                 };
